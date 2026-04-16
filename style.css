@@ -598,11 +598,14 @@ textarea:focus {
     100% { transform: scale(1); opacity: 1; }
 }
 
-/* Responsive Optimization */
+/* iOS & Safari Specific Optimization */
 @media (max-width: 1024px) {
     .main-container {
         flex-direction: column;
         padding: 1rem;
+        padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+        padding-left: calc(1rem + env(safe-area-inset-left));
+        padding-right: calc(1rem + env(safe-area-inset-right));
         gap: 2rem;
     }
 
@@ -614,7 +617,7 @@ textarea:focus {
     .preview-panel {
         padding: 0;
         background: transparent;
-        overflow-x: hidden; /* Prevent scaling overflow */
+        overflow-x: hidden;
     }
 
     .preview-wrapper {
@@ -623,68 +626,52 @@ textarea:focus {
         flex-direction: column;
         align-items: center;
         min-height: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
-    /* True Scaling System */
     .invoice-a4 {
         transform-origin: top center;
-        width: 210mm; 
+        width: 210mm;
         min-height: 297mm;
-        margin-bottom: -150px; /* Counter-act scale height gap */
-        transform: scale(0.9); /* Default tablet scale */
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Prevent iOS input auto-zoom */
+    input, select, textarea {
+        font-size: 16px !important;
     }
 }
 
 @media (max-width: 768px) {
-    .side-panel {
-        padding: 1.25rem;
-    }
-
-    .staff-row {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-        padding: 1rem;
-        background: rgba(255, 255, 255, 0.6);
-    }
-
-    .staff-row .form-group label {
-        font-size: 0.75rem;
-        margin-bottom: 0.25rem;
-    }
-
-    .delete-btn {
-        position: absolute;
-        top: 0.75rem;
-        right: 0.75rem;
-        width: 32px;
-        height: 32px;
-    }
-
     .invoice-a4 {
-        /* Scale to fit narrow screens perfectly */
-        transform: scale(0.42); /* Approx scale for 375px screens */
-        margin-bottom: -550px; /* Larger gap correction for deeper scale */
+        /* Finely tuned for typical iPhone width (390px) */
+        transform: scale(0.44); 
+        margin-bottom: -520px;
     }
 
     .btn.primary {
-        padding: 1rem;
-        font-size: 1.1rem;
+        bottom: calc(1rem + env(safe-area-inset-bottom));
     }
 }
 
-/* Precise scaling for different phone sizes */
-@media (max-width: 480px) {
+@media (max-width: 428px) { /* iPhone Max/Plus */
+    .invoice-a4 {
+        transform: scale(0.42);
+        margin-bottom: -550px;
+    }
+}
+
+@media (max-width: 390px) { /* iPhone Standard */
     .invoice-a4 {
         transform: scale(0.38);
         margin-bottom: -620px;
     }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 375px) { /* iPhone Mini/SE */
     .invoice-a4 {
-        transform: scale(0.34);
-        margin-bottom: -680px;
+        transform: scale(0.36);
+        margin-bottom: -660px;
     }
 }
 
