@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SourceOne Invoice Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/png" href="/SourceOnebg.png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+        <header class="app-header">
+            <div class="header-content">
+                <h1>SourceOne <span class="accent">Invoice</span></h1>
+            </div>
+        </header>
+
+        <main class="main-container">
+            <section class="side-panel">
+                <div class="card glass">
+                    <h2>Invoice Details</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="invoice-no">Invoice Number</label>
+                            <input type="text" id="invoice-no" placeholder="INV-001">
+                        </div>
+                        <div class="form-group">
+                            <label for="invoice-date">Date</label>
+                            <input type="date" id="invoice-date">
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <h2>Recipient Details</h2>
+                    <div class="form-group">
+                        <label for="company-name">Company Name</label>
+                        <div class="search-wrapper">
+                            <input type="text" id="company-name" autocomplete="off"
+                                placeholder="Start typing company name...">
+                            <button id="toggle-companies" class="dropdown-arrow">▼</button>
+                            <div id="company-results" class="search-results hidden"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="company-address">Address</label>
+                        <textarea id="company-address" rows="3" placeholder="Enter company address..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="company-gstin">GSTIN</label>
+                        <input type="text" id="company-gstin" placeholder="GSTIN number">
+                    </div>
+                    <button id="add-company-btn" class="btn secondary">Add/Update Company</button>
+
+                    <div class="divider"></div>
+
+                    <h2>Staff Details</h2>
+                    <div id="staff-rows" class="staff-rows">
+                        <!-- Rows added dynamically -->
+                    </div>
+                    <button id="add-row-btn" class="btn text-btn">+ Add Row</button>
+
+                    <div class="divider"></div>
+
+                    <div class="form-group">
+                        <label for="service-charge">Service Charge (Rs)</label>
+                        <input type="number" id="service-charge" placeholder="0.00">
+                    </div>
+
+                    <div class="actions">
+                        <button id="generate-pdf-btn" class="btn primary">Generate A4 PDF</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="preview-panel">
+                <div class="preview-wrapper">
+                    <div id="invoice-preview" class="invoice-a4">
+                        <!-- Header -->
+                        <div id="capture-header" class="preview-header">
+                            <div class="preview-logo">
+                                <img src="/logo.jpeg" alt="Logo" id="logo-img"
+                                    onerror="this.src='https://placehold.co/150x50?text=LOGO'">
+                            </div>
+                            <div class="preview-invoice-no">
+                                <p class="label">INVOICE NO</p>
+                                <p id="preview-no-val" class="value">-</p>
+                            </div>
+                        </div>
+
+                        <div id="capture-top-area" class="preview-top-info">
+                            <div class="sender-info">
+                                <h3>SourceOne</h3>
+                                <p>GSTIN: <span class="bold">29AZUPL99348B1ZQ</span></p>
+                            </div>
+                            <div class="date-info">
+                                <p>Date: <span id="preview-date-val">-</span></p>
+                            </div>
+                        </div>
+
+                        <div id="capture-recipient-area" class="recipient-info-preview">
+                            <p class="to-label">TO</p>
+                            <h2 id="preview-company-name">-</h2>
+                            <p id="preview-company-address">-</p>
+                            <p>GSTIN: <span id="preview-company-gstin">-</span></p>
+                        </div>
+
+                        <!-- Table -->
+                        <table class="invoice-table">
+                            <thead>
+                                <tr id="capture-table-header">
+                                    <th style="width: 10%">Sl No</th>
+                                    <th style="width: 60%">Designation of Staff</th>
+                                    <th style="width: 30%">Amount (Rs)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="preview-table-body">
+                                <!-- Table rows -->
+                            </tbody>
+                        </table>
+
+                        <div id="capture-summary">
+                            <!-- Calculations -->
+                            <div class="calc-section">
+                                <div class="calc-row">
+                                    <span>Total</span>
+                                    <span id="preview-total">-</span>
+                                </div>
+                                <div class="calc-row">
+                                    <span>Service Charge</span>
+                                    <span id="preview-service-charge">-</span>
+                                </div>
+                                <div class="calc-row subtotal">
+                                    <span>Sub Total</span>
+                                    <span id="preview-subtotal">-</span>
+                                </div>
+                                <div class="calc-row">
+                                    <span>SGST (9%)</span>
+                                    <span id="preview-sgst">-</span>
+                                </div>
+                                <div class="calc-row">
+                                    <span>CGST (9%)</span>
+                                    <span id="preview-cgst">-</span>
+                                </div>
+                                <div class="calc-row grand-total">
+                                    <span>Grand Total</span>
+                                    <span id="preview-grand-total">-</span>
+                                </div>
+                            </div>
+
+                            <div class="amount-words">
+                                <p>Amount in Words: <span id="preview-words" class="bold italic"></span></p>
+                            </div>
+
+                        </div> <!-- End of summary -->
+
+                        <!-- Footer -->
+                        <div id="capture-footer" class="preview-footer-area">
+                            <div class="signature-section">
+                                <div class="signature-img">
+                                    <img src="/signature.png" alt="Signature"
+                                        onerror="this.src='https://placehold.co/150x50?text=SIGNATURE'">
+                                </div>
+                                <div class="signature-details">
+                                    <p class="bold">Chandan Lokesh</p>
+                                    <p>Proprietor</p>
+                                </div>
+                            </div>
+
+                            <div class="footer-address">
+                                <p>#49/3, MEC Road, Industrial Subrub, Marappanapalya, Yeshwanthpura, Bengaluru-560022</p>
+                                <p>Mob: +91 9741965944, Office: 080-23476868</p>
+                                <p>Email: Info@sourceone.in</p>
+                            </div>
+                        </div>
+                    </div> <!-- End of invoice-preview -->
+                </div> <!-- End of preview-wrapper -->
+            </section>
+        </main>
+    </div>
+    <script type="module" src="src/main.js"></script>
+</body>
+
+</html>
