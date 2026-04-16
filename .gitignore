@@ -4,3 +4,7 @@ firestore.rules
 firestore.indexes.json
 
 node_modules
+.env
+.env.local
+ .env.example
+dist
