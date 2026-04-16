@@ -268,8 +268,10 @@ function numberToWords(num) {
 
 // --- PDF Generation (Modular Multi-Page) ---
 generatePdfBtn.addEventListener('click', async () => {
+    const loader = document.getElementById('pdf-loader');
     generatePdfBtn.disabled = true;
     generatePdfBtn.textContent = 'Generating...';
+    loader.classList.remove('hidden');
 
     try {
         const pdf = new jsPDF('p', 'mm', 'a4');
@@ -314,6 +316,7 @@ generatePdfBtn.addEventListener('click', async () => {
     } finally {
         generatePdfBtn.disabled = false;
         generatePdfBtn.textContent = 'Generate A4 PDF';
+        loader.classList.add('hidden');
     }
 });
 
