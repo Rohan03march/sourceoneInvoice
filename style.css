@@ -598,10 +598,137 @@ textarea:focus {
     100% { transform: scale(1); opacity: 1; }
 }
 
-/* Responsive */
+/* Responsive Optimization */
 @media (max-width: 1024px) {
     .main-container {
         flex-direction: column;
+        padding: 1rem;
+        gap: 2rem;
+    }
+
+    .side-panel {
+        max-width: 100%;
+        padding: 1.5rem;
+    }
+
+    .preview-panel {
+        padding: 0;
+        background: transparent;
+        overflow-x: hidden; /* Prevent scaling overflow */
+    }
+
+    .preview-wrapper {
+        padding: 1rem 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: auto;
+    }
+
+    /* True Scaling System */
+    .invoice-a4 {
+        transform-origin: top center;
+        width: 210mm; 
+        min-height: 297mm;
+        margin-bottom: -150px; /* Counter-act scale height gap */
+        transform: scale(0.9); /* Default tablet scale */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+}
+
+@media (max-width: 768px) {
+    .side-panel {
+        padding: 1.25rem;
+    }
+
+    .staff-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.6);
+    }
+
+    .staff-row .form-group label {
+        font-size: 0.75rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .delete-btn {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        width: 32px;
+        height: 32px;
+    }
+
+    .invoice-a4 {
+        /* Scale to fit narrow screens perfectly */
+        transform: scale(0.42); /* Approx scale for 375px screens */
+        margin-bottom: -550px; /* Larger gap correction for deeper scale */
+    }
+
+    .btn.primary {
+        padding: 1rem;
+        font-size: 1.1rem;
+    }
+}
+
+/* Precise scaling for different phone sizes */
+@media (max-width: 480px) {
+    .invoice-a4 {
+        transform: scale(0.38);
+        margin-bottom: -620px;
+    }
+}
+
+@media (max-width: 400px) {
+    .invoice-a4 {
+        transform: scale(0.34);
+        margin-bottom: -680px;
+    }
+}
+
+@media (max-width: 768px) {
+    .staff-row {
+        grid-template-columns: 1fr; /* Stack inputs on phones */
+        gap: 1rem;
+        padding: 1.5rem;
+    }
+
+    .delete-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 30px;
+        height: 30px;
+    }
+
+    .btn.primary {
+        position: sticky;
+        bottom: 1rem;
+        z-index: 100;
+        box-shadow: 0 10px 25px rgba(197, 53, 94, 0.4);
+    }
+    
+    .loader-content {
+        padding: 2rem;
+        width: 90%;
+    }
+    
+    .loader-logo {
+        width: 80px;
+    }
+}
+
+/* Scaling logic for extra small screens to keep A4 look */
+@media (max-width: 480px) {
+    .invoice-a4 {
+        font-size: 13px;
+        padding: 1.5rem;
+    }
+    
+    .preview-header {
+        margin-bottom: 2rem;
     }
 }
 
