@@ -392,111 +392,68 @@ textarea:focus {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 0;
-    border: 1px solid #cbd5e1;
+    /* Remove margin as summary is now part of the table or follows closely */
 }
 
 .invoice-table th {
-    background: #1e293b;
-    padding: 1rem;
+    background: #f8fafc;
+    padding: 0.75rem;
     text-align: left;
-    font-weight: 600;
-    border: 1px solid #334155;
-    color: white;
+    font-weight: 700;
+    border: 1px solid #cbd5e1;
+    /* Old style border */
+    color: var(--text);
     text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
-    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
 }
 
 .invoice-table td {
-    padding: 0.85rem 1rem;
+    padding: 0.75rem;
     border: 1px solid #cbd5e1;
+    /* Old style border */
     font-size: 0.95rem;
-    color: var(--text);
 }
 
-.invoice-table tbody tr:nth-child(even) {
-    background-color: #f8fafc;
+.invoice-table.old-style {
+    border: 1px solid #cbd5e1;
 }
 
 .invoice-table.old-style tfoot td {
-    padding: 0.75rem 1rem;
+    padding: 0.6rem 1rem;
+    background: #f8fafc;
 }
 
 .invoice-table.old-style .text-right {
     text-align: right;
     color: var(--text-light);
-    font-weight: 600;
-    font-size: 0.8rem;
-    text-transform: uppercase;
+    font-size: 0.85rem;
 }
 
 .invoice-table.old-style .value {
     text-align: right;
     font-family: 'Outfit', sans-serif;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text);
-    font-size: 1rem;
 }
 
 .invoice-table.old-style .subtotal-row td {
-    background: #f1f5f9;
-    font-weight: 600;
+    border-top: 2px solid var(--border);
+    background: #fff;
 }
 
 .invoice-table.old-style .grand-total-row td {
-    background: #fff1f2;
-    border-top: 2px solid var(--primary);
+    border-top: 2px solid var(--text);
+    background: #fef2f2;
 }
 
 .invoice-table.old-style .grand-total-row .text-right {
     color: var(--primary);
-    font-size: 0.9rem;
+    font-size: 1rem;
 }
 
 .invoice-table.old-style .grand-total-row .value {
     color: var(--primary);
-    font-size: 1.4rem;
-}
-
-.amount-words-row td {
-    background: #fff !important;
-    padding: 1.25rem 1rem !important;
-    border-top: 2px solid #cbd5e1;
-}
-
-.words-label {
-    font-size: 0.7rem;
-    color: var(--text-light);
-    text-transform: uppercase;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
-}
-
-.words-value {
-    font-size: 1rem;
-    color: var(--text);
-}
-
-.declaration-row td {
-    background: #f8fafc !important;
-    padding: 1rem !important;
-    border-top: 1px solid #cbd5e1;
-}
-
-.declaration-title {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--text-light);
-    margin-bottom: 0.25rem;
-}
-
-.declaration-text {
-    font-size: 0.75rem;
-    color: var(--text-light);
-    line-height: 1.4;
-    max-width: 80%;
+    font-size: 1.25rem;
 }
 
 #capture-summary {
