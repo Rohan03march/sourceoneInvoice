@@ -355,39 +355,20 @@ textarea:focus {
     max-height: 60px;
 }
 
-.preview-invoice-no {
+.date-info {
     text-align: right;
-}
-
-.preview-invoice-no .label {
-    font-size: 0.75rem;
-    color: var(--text-light);
-    text-transform: uppercase;
-    font-weight: 700;
-}
-
-.preview-invoice-no .value {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--text);
+    font-weight: 500;
 }
 
 .preview-top-info {
     display: flex;
     justify-content: space-between;
     margin-bottom: 1rem;
-    /* Reduced margin */
 }
 
-
-.sender-info h3 {
-    font-size: 1.5rem;
+.sender-info p {
+    font-size: 1rem;
     margin-bottom: 0.25rem;
-}
-
-.date-info {
-    text-align: right;
-    font-weight: 500;
 }
 
 .recipient-info-preview {

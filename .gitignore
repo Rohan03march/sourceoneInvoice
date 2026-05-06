@@ -6,5 +6,5 @@ firestore.indexes.json
 node_modules
 .env
 .env.local
- .env.example
+.env.example
 dist
