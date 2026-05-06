@@ -783,8 +783,8 @@ body.pdf-mode .invoice-a4 {
     min-height: 297mm !important;
     transform: none !important;
     margin: 0 !important;
-    padding: 8mm !important; /* Reduced from 15mm to increase width */
+    padding: 12mm !important; /* Adjusted to 12mm for a balanced width */
     border-radius: 0 !important;
     box-shadow: none !important;
-    font-size: 15px !important; /* Slightly increased for better filling */
+    font-size: 14px !important; /* Reverted to 14px */
 }
