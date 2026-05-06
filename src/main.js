@@ -288,14 +288,12 @@ generatePdfBtn.addEventListener('click', async () => {
         previewContainer.style.height = 'auto';
 
         const canvas = await html2canvas(previewContainer, { 
-            scale: 3, // Increased scale for better resolution
+            scale: 4, // Increased from 3 for even better precision
             useCORS: true, 
             logging: false,
-            windowWidth: 1200, // Force desktop width logic
+            windowWidth: 1200, 
             onclone: (clonedDoc) => {
-                // Ensure the cloned document also has the class
                 clonedDoc.body.classList.add('pdf-mode');
-                // Hide any elements that might still be visible in the clone
                 const loader = clonedDoc.getElementById('pdf-loader');
                 if (loader) loader.style.display = 'none';
             }
@@ -305,12 +303,12 @@ generatePdfBtn.addEventListener('click', async () => {
         const imgWidth = pageWidth;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         
-        // Standard A4 dimensions
+        // Fit to page but ensure width is prioritized
         if (imgHeight > pageHeight) {
-            // If it exceeds one page, we could add multiple pages, but for now we scale to fit
-            // as per current logic, but with better quality
             const ratio = pageHeight / imgHeight;
-            pdf.addImage(imgData, 'PNG', (pageWidth - (imgWidth * ratio)) / 2, 0, imgWidth * ratio, pageHeight);
+            // Always fill width if it's within a reasonable threshold, otherwise scale down
+            // But user wants "more width", so let's ensure we use pageWidth
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight > pageHeight ? pageHeight : imgHeight);
         } else {
             pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
         }
