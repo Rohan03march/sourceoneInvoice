@@ -54,37 +54,63 @@ async function fetchCompanies() {
 const toggleCompaniesBtn = document.getElementById('toggle-companies');
 
 // Custom Dropdown Logic
-const renderResults = (list) => {
-    companyResults.innerHTML = '';
-    if (list.length > 0) {
-        list.forEach(company => {
-            const div = document.createElement('div');
-            div.className = 'result-item';
-            div.innerHTML = `<span class="icon">🏢</span> ${company.name}`;
-            div.onmousedown = (event) => {
-                event.preventDefault();
-                companyNameInput.value = company.name;
-                companyAddressInput.value = company.address || '';
-                companyGstinInput.value = company.gstin || '';
-                companyResults.classList.add('hidden');
-                updatePreview();
-            };
-            companyResults.appendChild(div);
-        });
-        companyResults.classList.remove('hidden');
-    } else {
-        const div = document.createElement('div');
-        div.className = 'result-item no-results';
-        div.textContent = 'No results found';
-        companyResults.appendChild(div);
-        companyResults.classList.remove('hidden');
+const renderResults = (list, isAll = false) => {
+    companyResults.innerHTML = `
+        <div class="dropdown-search-container">
+            <div class="dropdown-search-wrapper">
+                <input type="text" id="dropdown-inner-search" placeholder="Search companies..." autocomplete="off">
+            </div>
+        </div>
+        <div class="results-list"></div>
+    `;
+    
+    const resultsList = companyResults.querySelector('.results-list');
+    const innerSearch = companyResults.querySelector('#dropdown-inner-search');
+
+    const renderList = (filteredList) => {
+        resultsList.innerHTML = '';
+        if (filteredList.length > 0) {
+            filteredList.forEach(company => {
+                const div = document.createElement('div');
+                div.className = 'result-item';
+                div.innerHTML = `<span class="icon">🏢</span> ${company.name}`;
+                div.onmousedown = (event) => {
+                    event.preventDefault();
+                    companyNameInput.value = company.name;
+                    companyAddressInput.value = company.address || '';
+                    companyGstinInput.value = company.gstin || '';
+                    companyResults.classList.add('hidden');
+                    updatePreview();
+                };
+                resultsList.appendChild(div);
+            });
+        } else {
+            resultsList.innerHTML = `<div class="result-item no-results">No results found</div>`;
+        }
+    };
+
+    renderList(list);
+    companyResults.classList.remove('hidden');
+
+    // Handle inner search
+    innerSearch.addEventListener('input', (e) => {
+        const val = e.target.value.toLowerCase().trim();
+        const filtered = companies.filter(c => c.name.toLowerCase().includes(val));
+        renderList(filtered);
+    });
+
+    // Prevent search click from closing dropdown
+    innerSearch.addEventListener('mousedown', (e) => e.stopPropagation());
+    
+    if (isAll) {
+        innerSearch.focus();
     }
 };
 
 const handleSearch = (e) => {
     const value = companyNameInput.value.toLowerCase().trim();
     if (!value) {
-        renderResults(companies); // Show all companies if input is empty
+        renderResults(companies); 
         return;
     }
     const filtered = companies.filter(c => c.name.toLowerCase().includes(value));
@@ -94,7 +120,7 @@ const handleSearch = (e) => {
 toggleCompaniesBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     if (companyResults.classList.contains('hidden')) {
-        renderResults(companies);
+        renderResults(companies, true);
     } else {
         companyResults.classList.add('hidden');
     }
@@ -148,11 +174,14 @@ const autoFill = () => {
     }
 };
 
-companyNameInput.addEventListener('blur', () => {
+companyNameInput.addEventListener('blur', (e) => {
     // Small delay to allow click on results list
     setTimeout(() => {
-        companyResults.classList.add('hidden');
-        autoFill();
+        // Only hide if the focus didn't move to the inner search
+        if (!document.activeElement || document.activeElement.id !== 'dropdown-inner-search') {
+            companyResults.classList.add('hidden');
+            autoFill();
+        }
     }, 200);
 });
 
