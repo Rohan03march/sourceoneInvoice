@@ -279,41 +279,53 @@ generatePdfBtn.addEventListener('click', async () => {
         const pageHeight = pdf.internal.pageSize.getHeight();
         
         const previewContainer = document.getElementById('invoice-preview');
-        const originalWidth = previewContainer.style.width;
-        const originalHeight = previewContainer.style.height;
+        
+        // Add PDF mode class to body to force desktop layout
+        document.body.classList.add('pdf-mode');
         
         // Setup for HQ Capture
         previewContainer.style.width = '210mm';
         previewContainer.style.height = 'auto';
 
         const canvas = await html2canvas(previewContainer, { 
-            scale: 2, 
+            scale: 3, // Increased scale for better resolution
             useCORS: true, 
             logging: false,
-            windowWidth: 1200
+            windowWidth: 1200, // Force desktop width logic
+            onclone: (clonedDoc) => {
+                // Ensure the cloned document also has the class
+                clonedDoc.body.classList.add('pdf-mode');
+                // Hide any elements that might still be visible in the clone
+                const loader = clonedDoc.getElementById('pdf-loader');
+                if (loader) loader.style.display = 'none';
+            }
         });
         
-        const imgData = canvas.toDataURL('image/png');
+        const imgData = canvas.toDataURL('image/png', 1.0);
         const imgWidth = pageWidth;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         
-        // If content is taller than A4, scale it down to fit on one page
+        // Standard A4 dimensions
         if (imgHeight > pageHeight) {
+            // If it exceeds one page, we could add multiple pages, but for now we scale to fit
+            // as per current logic, but with better quality
             const ratio = pageHeight / imgHeight;
             pdf.addImage(imgData, 'PNG', (pageWidth - (imgWidth * ratio)) / 2, 0, imgWidth * ratio, pageHeight);
         } else {
             pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
         }
 
-        // Restore original UI styling
-        previewContainer.style.width = '';
-        previewContainer.style.height = '';
-
         pdf.save(`Invoice_${invoiceNoInput.value || 'Draft'}.pdf`);
     } catch (e) {
         console.error("PDF generation failed: ", e);
         alert('Failed to generate PDF');
     } finally {
+        // Restore original UI styling
+        document.body.classList.remove('pdf-mode');
+        const previewContainer = document.getElementById('invoice-preview');
+        previewContainer.style.width = '';
+        previewContainer.style.height = '';
+
         generatePdfBtn.disabled = false;
         generatePdfBtn.textContent = 'Generate A4 PDF';
         loader.classList.add('hidden');
