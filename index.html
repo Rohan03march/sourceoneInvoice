@@ -107,9 +107,8 @@
                             <p id="preview-company-address">-</p>
                             <p>GSTIN: <span id="preview-company-gstin">-</span></p>
                         </div>
-
-                        <!-- Table -->
-                        <table class="invoice-table">
+                        <!-- Unified Invoice Table -->
+                        <table class="invoice-table old-style">
                             <thead>
                                 <tr id="capture-table-header">
                                     <th style="width: 10%">Sl No</th>
@@ -118,43 +117,43 @@
                                 </tr>
                             </thead>
                             <tbody id="preview-table-body">
-                                <!-- Table rows -->
+                                <!-- Table rows added by JS -->
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2" class="text-right">Total</td>
+                                    <td id="preview-total" class="value">-</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-right">Service Charge</td>
+                                    <td id="preview-service-charge" class="value">-</td>
+                                </tr>
+                                <tr class="subtotal-row">
+                                    <td colspan="2" class="text-right bold">Sub Total</td>
+                                    <td id="preview-subtotal" class="value bold">-</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-right">SGST (9%)</td>
+                                    <td id="preview-sgst" class="value">-</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-right">CGST (9%)</td>
+                                    <td id="preview-cgst" class="value">-</td>
+                                </tr>
+                                <tr class="grand-total-row">
+                                    <td colspan="2" class="text-right bold">Grand Total</td>
+                                    <td id="preview-grand-total" class="value bold">-</td>
+                                </tr>
+                                <tr class="amount-words-row">
+                                    <td colspan="3">
+                                        <p>Amount in Words: <span id="preview-words" class="bold italic"></span></p>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
 
                         <div id="capture-summary">
-                            <!-- Calculations -->
-                            <div class="calc-section">
-                                <div class="calc-row">
-                                    <span>Total</span>
-                                    <span id="preview-total">-</span>
-                                </div>
-                                <div class="calc-row">
-                                    <span>Service Charge</span>
-                                    <span id="preview-service-charge">-</span>
-                                </div>
-                                <div class="calc-row subtotal">
-                                    <span>Sub Total</span>
-                                    <span id="preview-subtotal">-</span>
-                                </div>
-                                <div class="calc-row">
-                                    <span>SGST (9%)</span>
-                                    <span id="preview-sgst">-</span>
-                                </div>
-                                <div class="calc-row">
-                                    <span>CGST (9%)</span>
-                                    <span id="preview-cgst">-</span>
-                                </div>
-                                <div class="calc-row grand-total">
-                                    <span>Grand Total</span>
-                                    <span id="preview-grand-total">-</span>
-                                </div>
-                            </div>
-
-                            <div class="amount-words">
-                                <p>Amount in Words: <span id="preview-words" class="bold italic"></span></p>
-                            </div>
-
+                            <!-- No longer needed as words moved to table -->
                         </div> <!-- End of summary -->
 
                         <!-- Footer -->

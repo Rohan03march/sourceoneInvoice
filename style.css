@@ -391,22 +391,112 @@ textarea:focus {
 .invoice-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 1rem;
-    /* Reduced margin */
+    margin-bottom: 0;
+    border: 1px solid #cbd5e1;
 }
 
-
 .invoice-table th {
-    background: #f1f5f9;
-    padding: 0.75rem;
+    background: #1e293b;
+    padding: 1rem;
     text-align: left;
-    font-weight: 700;
-    border-bottom: 2px solid var(--border);
+    font-weight: 600;
+    border: 1px solid #334155;
+    color: white;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    font-family: 'Outfit', sans-serif;
 }
 
 .invoice-table td {
-    padding: 0.75rem;
-    border-bottom: 1px solid var(--border);
+    padding: 0.85rem 1rem;
+    border: 1px solid #cbd5e1;
+    font-size: 0.95rem;
+    color: var(--text);
+}
+
+.invoice-table tbody tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+.invoice-table.old-style tfoot td {
+    padding: 0.75rem 1rem;
+}
+
+.invoice-table.old-style .text-right {
+    text-align: right;
+    color: var(--text-light);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.invoice-table.old-style .value {
+    text-align: right;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    color: var(--text);
+    font-size: 1rem;
+}
+
+.invoice-table.old-style .subtotal-row td {
+    background: #f1f5f9;
+    font-weight: 600;
+}
+
+.invoice-table.old-style .grand-total-row td {
+    background: #fff1f2;
+    border-top: 2px solid var(--primary);
+}
+
+.invoice-table.old-style .grand-total-row .text-right {
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+.invoice-table.old-style .grand-total-row .value {
+    color: var(--primary);
+    font-size: 1.4rem;
+}
+
+.amount-words-row td {
+    background: #fff !important;
+    padding: 1.25rem 1rem !important;
+    border-top: 2px solid #cbd5e1;
+}
+
+.words-label {
+    font-size: 0.7rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.words-value {
+    font-size: 1rem;
+    color: var(--text);
+}
+
+.declaration-row td {
+    background: #f8fafc !important;
+    padding: 1rem !important;
+    border-top: 1px solid #cbd5e1;
+}
+
+.declaration-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 0.25rem;
+}
+
+.declaration-text {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    line-height: 1.4;
+    max-width: 80%;
 }
 
 #capture-summary {
@@ -414,61 +504,14 @@ textarea:focus {
     flex-direction: column;
     align-items: flex-end;
     width: 100%;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
-.calc-section {
-    width: 300px;
-}
-
-
-.calc-row {
-    display: flex;
-    justify-content: flex-end;
-    gap: 3rem;
-    padding: 0.5rem 0;
-}
-
-.calc-row span:first-child {
-    color: var(--text-light);
-    font-size: 0.85rem;
-}
-
-.calc-row span:last-child {
-    font-family: 'Outfit', sans-serif;
-    min-width: 80px;
-    text-align: right;
-}
-
-.calc-row.subtotal {
-    border-top: 2px solid var(--border);
-    margin-top: 0.5rem;
-    font-weight: 600;
-}
-
-.calc-row.grand-total {
-    border-top: 2px solid var(--text);
-    margin-top: 0.5rem;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--primary);
-}
-
-.amount-words {
-    align-self: flex-start;
-    /* Move back to left */
-    width: 100%;
-    /* Take full width for readability */
-    text-align: left;
-    margin-top: 1.5rem;
-    /* Add space from totals */
-    padding: 1rem;
-    background: #fffafa;
-    /* Lighter tint */
-    border-radius: 0.5rem;
+.amount-words-row td {
+    background: #fffafa !important;
+    padding: 1rem !important;
     font-size: 0.9rem;
-    border-left: 2px solid var(--primary);
-    /* Accent line */
+    border-top: 1px solid var(--border);
 }
 
 .italic {
@@ -522,7 +565,8 @@ textarea:focus {
     left: 0;
     width: 100%;
     height: 100%;
-    background: transparent; /* Fully transparent background */
+    background: transparent;
+    /* Fully transparent background */
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     display: flex;
@@ -539,7 +583,8 @@ textarea:focus {
 }
 
 .loader-content {
-    background: transparent; /* Card background transparent as requested */
+    background: transparent;
+    /* Card background transparent as requested */
     padding: 3rem;
     border-radius: 2.5rem;
     text-align: center;
@@ -569,14 +614,30 @@ textarea:focus {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.1); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 /* iOS & Safari Specific Optimization */
@@ -618,7 +679,9 @@ textarea:focus {
     }
 
     /* Prevent iOS input auto-zoom */
-    input, select, textarea {
+    input,
+    select,
+    textarea {
         font-size: 16px !important;
     }
 }
@@ -626,7 +689,7 @@ textarea:focus {
 @media (max-width: 768px) {
     .invoice-a4 {
         /* Finely tuned for typical iPhone width (390px) */
-        transform: scale(0.44); 
+        transform: scale(0.44);
         margin-bottom: -520px;
     }
 
@@ -635,21 +698,27 @@ textarea:focus {
     }
 }
 
-@media (max-width: 428px) { /* iPhone Max/Plus */
+@media (max-width: 428px) {
+
+    /* iPhone Max/Plus */
     .invoice-a4 {
         transform: scale(0.42);
         margin-bottom: -550px;
     }
 }
 
-@media (max-width: 390px) { /* iPhone Standard */
+@media (max-width: 390px) {
+
+    /* iPhone Standard */
     .invoice-a4 {
         transform: scale(0.38);
         margin-bottom: -620px;
     }
 }
 
-@media (max-width: 375px) { /* iPhone Mini/SE */
+@media (max-width: 375px) {
+
+    /* iPhone Mini/SE */
     .invoice-a4 {
         transform: scale(0.36);
         margin-bottom: -660px;
@@ -658,7 +727,8 @@ textarea:focus {
 
 @media (max-width: 768px) {
     .staff-row {
-        grid-template-columns: 1fr; /* Stack inputs on phones */
+        grid-template-columns: 1fr;
+        /* Stack inputs on phones */
         gap: 1rem;
         padding: 1.5rem;
     }
@@ -677,12 +747,12 @@ textarea:focus {
         z-index: 100;
         box-shadow: 0 10px 25px rgba(197, 53, 94, 0.4);
     }
-    
+
     .loader-content {
         padding: 2rem;
         width: 90%;
     }
-    
+
     .loader-logo {
         width: 80px;
     }
@@ -694,7 +764,7 @@ textarea:focus {
         font-size: 13px;
         padding: 1.5rem;
     }
-    
+
     .preview-header {
         margin-bottom: 2rem;
     }
