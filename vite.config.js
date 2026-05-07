@@ -6,7 +6,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        ledger: resolve(__dirname, 'ledger.html'),
+        ledger: resolve(__dirname, 'ledger/index.html'),
       },
     },
   },

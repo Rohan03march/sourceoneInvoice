@@ -352,7 +352,7 @@ generatePdfBtn.addEventListener('click', async () => {
         previewContainer.style.height = 'auto';
 
         const canvas = await html2canvas(previewContainer, { 
-            scale: 2, // Reduced from 4 to significantly decrease file size
+            scale: 1.5, // Further reduced for smaller file size
             useCORS: true, 
             logging: false,
             windowWidth: 1200, 
@@ -363,7 +363,7 @@ generatePdfBtn.addEventListener('click', async () => {
             }
         });
         
-        const imgData = canvas.toDataURL('image/jpeg', 0.8);
+        const imgData = canvas.toDataURL('image/jpeg', 0.6); // Reduced quality from 0.8 to 0.6
         const imgWidth = pageWidth;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         
