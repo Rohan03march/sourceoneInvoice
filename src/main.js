@@ -376,6 +376,26 @@ generatePdfBtn.addEventListener('click', async () => {
         }
 
         pdf.save(`Invoice_${invoiceNoInput.value || 'Draft'}.pdf`);
+
+        // --- Save to Firestore for Ledger ---
+        try {
+            const invoiceData = {
+                invoiceNo: invoiceNoInput.value || 'Draft',
+                date: invoiceDateInput.value,
+                companyName: companyNameInput.value,
+                companyAddress: companyAddressInput.value,
+                companyGstin: companyGstinInput.value,
+                staffRows: staffRows,
+                serviceCharge: includeServiceChargeCheckbox.checked ? (parseFloat(serviceChargeInput.value) || 0) : 0,
+                isGstIncluded: includeGstCheckbox.checked,
+                totalAmount: parseFloat(previewGrandTotal.textContent.replace(/[₹,]/g, '')),
+                createdAt: new Date()
+            };
+            await addDoc(collection(db, "invoices"), invoiceData);
+            console.log("Invoice saved to ledger");
+        } catch (saveError) {
+            console.error("Error saving to ledger:", saveError);
+        }
     } catch (e) {
         console.error("PDF generation failed: ", e);
         alert('Failed to generate PDF');
