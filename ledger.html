@@ -296,6 +296,107 @@
         .company-link:hover {
             opacity: 0.7;
         }
+        .date-filter {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-light);
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .date-filter input {
+            padding: 0.5rem;
+            font-size: 0.85rem;
+            width: auto;
+            min-width: 140px;
+        }
+
+        @media (max-width: 768px) {
+            .date-filter {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-group {
+                justify-content: space-between;
+            }
+        }
+        .download-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .download-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .ledger-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .view-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .view-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .delete-btn-ledger {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .delete-btn-ledger:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
     </style>
 </head>
 
@@ -316,10 +417,22 @@
                         <input type="text" id="ledger-search" placeholder="Search by Invoice No or Company...">
                     </div>
                     <div class="date-filter">
-                        <input type="date" id="ledger-date-filter">
+                        <div class="filter-group">
+                            <label>From</label>
+                            <input type="date" id="ledger-start-date">
+                        </div>
+                        <div class="filter-group">
+                            <label>To</label>
+                            <input type="date" id="ledger-end-date">
+                        </div>
                     </div>
-                    <div class="ledger-stats">
-                        <span id="total-count">0</span> Invoices Found
+                    <div class="ledger-actions">
+                        <div class="ledger-stats">
+                            <span id="total-count">0</span> Invoices Found
+                        </div>
+                        <button id="download-csv" class="download-btn">
+                            📊 Export to Excel
+                        </button>
                     </div>
                 </div>
 
@@ -331,6 +444,7 @@
                                 <th>Invoice No</th>
                                 <th>Company</th>
                                 <th>Amount</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="ledger-body">
@@ -381,6 +495,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <script type="module" src="src/ledger.js"></script>
 </body>
 

@@ -1,5 +1,5 @@
 import { db } from './firebase';
-import { collection, query, orderBy, getDocs, limit, startAfter, endBefore, limitToLast } from 'firebase/firestore';
+import { collection, query, orderBy, getDocs, doc, deleteDoc } from 'firebase/firestore';
 
 // --- Configuration ---
 const PAGE_SIZE = 10;
@@ -12,11 +12,13 @@ let filteredInvoices = [];
 // --- Selectors ---
 const ledgerBody = document.getElementById('ledger-body');
 const searchInput = document.getElementById('ledger-search');
-const dateFilterInput = document.getElementById('ledger-date-filter');
+const startDateInput = document.getElementById('ledger-start-date');
+const endDateInput = document.getElementById('ledger-end-date');
 const prevBtn = document.getElementById('prev-page');
 const nextBtn = document.getElementById('next-page');
 const pageInfo = document.getElementById('page-info');
 const totalCountDisplay = document.getElementById('total-count');
+const downloadCsvBtn = document.getElementById('download-csv');
 
 // --- Initialization ---
 async function init() {
@@ -40,13 +42,16 @@ async function fetchAllInvoices() {
 
 function filterData() {
     const searchVal = searchInput.value.toLowerCase().trim();
-    const dateVal = dateFilterInput.value;
+    const startVal = startDateInput.value;
+    const endVal = endDateInput.value;
 
     filteredInvoices = allInvoices.filter(inv => {
         const matchesSearch = inv.invoiceNo.toLowerCase().includes(searchVal) ||
                              inv.companyName.toLowerCase().includes(searchVal);
         
-        const matchesDate = !dateVal || inv.date === dateVal;
+        let matchesDate = true;
+        if (startVal && inv.date < startVal) matchesDate = false;
+        if (endVal && inv.date > endVal) matchesDate = false;
         
         return matchesSearch && matchesDate;
     });
@@ -58,7 +63,9 @@ function filterData() {
 
 function setupEventListeners() {
     searchInput.addEventListener('input', filterData);
-    dateFilterInput.addEventListener('change', filterData);
+    startDateInput.addEventListener('change', filterData);
+    endDateInput.addEventListener('change', filterData);
+    downloadCsvBtn.addEventListener('click', exportToExcel);
 
     prevBtn.addEventListener('click', () => {
         if (currentPage > 1) {
@@ -73,6 +80,73 @@ function setupEventListeners() {
             renderPage();
         }
     });
+}
+
+function exportToExcel() {
+    if (filteredInvoices.length === 0) {
+        alert('No data to export.');
+        return;
+    }
+
+    const startVal = startDateInput.value || 'All Time';
+    const endVal = endDateInput.value || 'Present';
+
+    // Prepare report headers and data
+    const headers = ["Date", "Invoice No", "Company", "GSTIN", "Total Amount"];
+    const reportInfo = [
+        ["SOURCEONE INVOICE LEDGER"],
+        [`Report Period: ${startVal} to ${endVal}`],
+        [`Generated On: ${new Date().toLocaleString()}`],
+        [] // Spacer
+    ];
+
+    const dataRows = filteredInvoices.map(inv => [
+        inv.date,
+        inv.invoiceNo,
+        inv.companyName,
+        inv.companyGstin || '-',
+        inv.totalAmount
+    ]);
+
+    // Calculate Total
+    const totalAmount = filteredInvoices.reduce((sum, inv) => sum + (inv.totalAmount || 0), 0);
+    const totalRow = [
+        [],
+        ["", "", "", "GRAND TOTAL", totalAmount]
+    ];
+
+    // Combine all into a single array of arrays (AOA)
+    const aoa = [
+        ...reportInfo,
+        headers,
+        ...dataRows,
+        ...totalRow
+    ];
+
+    // Create workbook and worksheet
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Ledger Report");
+
+    // Merge header cells for better presentation
+    ws['!merges'] = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }, // Title
+        { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } }, // Period
+        { s: { r: 2, c: 0 }, e: { r: 2, c: 4 } }  // Generation Date
+    ];
+
+    // Set column widths
+    ws['!cols'] = [
+        { wch: 12 }, // Date
+        { wch: 18 }, // Invoice No
+        { wch: 35 }, // Company
+        { wch: 20 }, // GSTIN
+        { wch: 15 }  // Total Amount
+    ];
+
+    // Trigger download
+    const fileName = `SourceOne_Ledger_${startVal}_to_${endVal}.xlsx`;
+    XLSX.writeFile(wb, fileName);
 }
 
 function formatDate(dateStr) {
@@ -91,17 +165,21 @@ function renderPage() {
     ledgerBody.innerHTML = '';
 
     if (pageData.length === 0) {
-        ledgerBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 2rem; color: var(--text-light);">No invoices found.</td></tr>`;
+        ledgerBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-light);">No invoices found.</td></tr>`;
     } else {
         pageData.forEach(inv => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${formatDate(inv.date)}</td>
                 <td class="bold">${inv.invoiceNo}</td>
-                <td>
-                    <span class="company-link" onclick="window.showInvoiceDetails('${inv.id}')">${inv.companyName}</span>
-                </td>
+                <td>${inv.companyName}</td>
                 <td class="bold">₹${inv.totalAmount.toLocaleString('en-IN')}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="view-btn" onclick="window.showInvoiceDetails('${inv.id}')">View</button>
+                        <button class="delete-btn-ledger" onclick="window.deleteInvoice('${inv.id}')">Delete</button>
+                    </div>
+                </td>
             `;
             ledgerBody.appendChild(tr);
         });
@@ -170,6 +248,27 @@ window.showInvoiceDetails = (invoiceId) => {
 closeModal.onclick = () => modal.style.display = 'none';
 window.onclick = (event) => {
     if (event.target == modal) modal.style.display = 'none';
+};
+
+window.deleteInvoice = async (invoiceId) => {
+    if (confirm('Are you sure you want to delete this invoice? This action cannot be undone.')) {
+        try {
+            await deleteDoc(doc(db, "invoices", invoiceId));
+            
+            // Update local arrays
+            allInvoices = allInvoices.filter(i => i.id !== invoiceId);
+            filteredInvoices = filteredInvoices.filter(i => i.id !== invoiceId);
+            
+            // Update UI
+            totalCountDisplay.textContent = filteredInvoices.length;
+            renderPage();
+            
+            alert('Invoice deleted successfully.');
+        } catch (error) {
+            console.error("Error deleting invoice:", error);
+            alert('Error deleting invoice. Please try again.');
+        }
+    }
 };
 
 init();
