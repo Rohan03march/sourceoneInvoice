@@ -358,11 +358,6 @@ generatePdfBtn.addEventListener('click', async () => {
         companyGstinInput.focus();
         return;
     }
-    if (companyGstinInput.value.length < 15) {
-        alert('GSTIN must be 15 characters long');
-        companyGstinInput.focus();
-        return;
-    }
 
     const loader = document.getElementById('pdf-loader');
     generatePdfBtn.disabled = true;
