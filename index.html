@@ -56,7 +56,9 @@
                     </div>
                     <div class="form-group">
                         <label for="company-gstin">GSTIN</label>
-                        <input type="text" id="company-gstin" placeholder="GSTIN number">
+                        <input type="text" id="company-gstin" placeholder="Enter GSTIN" maxlength="15"
+                            style="text-transform: uppercase;"
+                            oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
                     </div>
                     <button id="add-company-btn" class="btn secondary">Add/Update Company</button>
 

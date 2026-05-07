@@ -332,6 +332,38 @@ function numberToWords(num) {
 
 // --- PDF Generation (Modular Multi-Page) ---
 generatePdfBtn.addEventListener('click', async () => {
+    // Validation
+    if (!invoiceNoInput.value.trim()) {
+        alert('Please enter an Invoice Number');
+        invoiceNoInput.focus();
+        return;
+    }
+    if (!invoiceDateInput.value) {
+        alert('Please select an Invoice Date');
+        invoiceDateInput.focus();
+        return;
+    }
+    if (!companyNameInput.value.trim()) {
+        alert('Please enter a Company Name');
+        companyNameInput.focus();
+        return;
+    }
+    if (!companyAddressInput.value.trim()) {
+        alert('Please enter a Company Address');
+        companyAddressInput.focus();
+        return;
+    }
+    if (!companyGstinInput.value.trim()) {
+        alert('Please enter a GSTIN number');
+        companyGstinInput.focus();
+        return;
+    }
+    if (companyGstinInput.value.length < 15) {
+        alert('GSTIN must be 15 characters long');
+        companyGstinInput.focus();
+        return;
+    }
+
     const loader = document.getElementById('pdf-loader');
     generatePdfBtn.disabled = true;
     generatePdfBtn.textContent = 'Generating...';
