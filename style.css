@@ -115,6 +115,28 @@ label {
     margin-bottom: 0.5rem;
 }
 
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    cursor: pointer;
+}
+
 input,
 textarea,
 select {
@@ -537,24 +559,40 @@ textarea:focus {
     flex-direction: column;
 }
 
-.signature-section {
-    margin-left: auto;
-    /* Push to right */
-    text-align: center;
+.footer-main-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
     margin-bottom: 1.5rem;
-    width: 200px;
-    /* Narrower section */
+}
+
+.bank-details {
+    text-align: left;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.bank-details p {
+    margin: 0;
+}
+
+.bank-details .to-label {
+    margin-bottom: 0.5rem;
+}
+
+.signature-section {
+    text-align: center;
+    width: 180px;
+    margin-right: 1.5rem;
 }
 
 .signature-img img {
-    max-height: 70px;
-    /* Smaller signature image */
+    max-height: 75px;
     margin-bottom: 0.25rem;
 }
 
 .signature-details p {
-    font-size: 0.8rem;
-    /* Smaller detail text */
+    font-size: 0.75rem;
     line-height: 1.2;
 }
 

@@ -35,6 +35,17 @@ const previewCgst = document.getElementById('preview-cgst');
 const previewGrandTotal = document.getElementById('preview-grand-total');
 const previewWords = document.getElementById('preview-words');
 
+// --- New Feature Selectors ---
+const includeServiceChargeCheckbox = document.getElementById('include-service-charge');
+const includeGstCheckbox = document.getElementById('include-gst');
+const serviceChargeInputContainer = document.getElementById('service-charge-input-container');
+
+const rowServiceCharge = document.getElementById('row-service-charge');
+const rowSubtotal = document.getElementById('row-subtotal');
+const rowSgst = document.getElementById('row-sgst');
+const rowCgst = document.getElementById('row-cgst');
+const grandTotalLabel = document.getElementById('grand-total-label');
+
 // --- Initialization ---
 async function init() {
     setupEventListeners();
@@ -233,6 +244,14 @@ function setupEventListeners() {
     [invoiceNoInput, invoiceDateInput, companyNameInput, companyAddressInput, companyGstinInput, serviceChargeInput].forEach(el => {
         el.addEventListener('input', updatePreview);
     });
+
+    // New feature listeners
+    includeServiceChargeCheckbox.addEventListener('change', () => {
+        serviceChargeInputContainer.style.display = includeServiceChargeCheckbox.checked ? 'block' : 'none';
+        updatePreview();
+    });
+
+    includeGstCheckbox.addEventListener('change', updatePreview);
 }
 
 function updatePreview() {
@@ -262,17 +281,33 @@ function updatePreview() {
         previewTableBody.appendChild(tr);
     });
 
-    const serviceCharge = parseFloat(serviceChargeInput.value) || 0;
+    const isServiceChargeEnabled = includeServiceChargeCheckbox.checked;
+    const isGstEnabled = includeGstCheckbox.checked;
+
+    const serviceCharge = isServiceChargeEnabled ? (parseFloat(serviceChargeInput.value) || 0) : 0;
     const subtotal = totalAmt + serviceCharge;
-    const sgst = subtotal * 0.09;
-    const cgst = subtotal * 0.09;
-    const grandTotal = subtotal + sgst + cgst;
+    
+    // Visibility logic
+    rowServiceCharge.style.display = isServiceChargeEnabled ? 'table-row' : 'none';
+    rowSubtotal.style.display = (isServiceChargeEnabled && isGstEnabled) ? 'table-row' : 'none';
+    rowSgst.style.display = isGstEnabled ? 'table-row' : 'none';
+    rowCgst.style.display = isGstEnabled ? 'table-row' : 'none';
+
+    let grandTotal = subtotal;
+    if (isGstEnabled) {
+        const sgst = subtotal * 0.09;
+        const cgst = subtotal * 0.09;
+        grandTotal = subtotal + sgst + cgst;
+        previewSgst.textContent = `₹${sgst.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+        previewCgst.textContent = `₹${cgst.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+    }
+
+    // Adjust label if no GST/Service charge
+    grandTotalLabel.textContent = (isGstEnabled || isServiceChargeEnabled) ? 'Grand Total' : 'Total';
 
     previewTotal.textContent = `₹${totalAmt.toLocaleString('en-IN')}`;
     previewServiceCharge.textContent = `₹${serviceCharge.toLocaleString('en-IN')}`;
     previewSubtotal.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
-    previewSgst.textContent = `₹${sgst.toLocaleString('en-IN')}`;
-    previewCgst.textContent = `₹${cgst.toLocaleString('en-IN')}`;
     previewGrandTotal.textContent = `₹${Math.round(grandTotal).toLocaleString('en-IN')}`;
     
     previewWords.textContent = numberToWords(Math.round(grandTotal)) + " Only";
@@ -317,7 +352,7 @@ generatePdfBtn.addEventListener('click', async () => {
         previewContainer.style.height = 'auto';
 
         const canvas = await html2canvas(previewContainer, { 
-            scale: 4, // Increased from 3 for even better precision
+            scale: 2, // Reduced from 4 to significantly decrease file size
             useCORS: true, 
             logging: false,
             windowWidth: 1200, 
@@ -328,18 +363,16 @@ generatePdfBtn.addEventListener('click', async () => {
             }
         });
         
-        const imgData = canvas.toDataURL('image/png', 1.0);
+        const imgData = canvas.toDataURL('image/jpeg', 0.8);
         const imgWidth = pageWidth;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         
         // Fit to page but ensure width is prioritized
         if (imgHeight > pageHeight) {
             const ratio = pageHeight / imgHeight;
-            // Always fill width if it's within a reasonable threshold, otherwise scale down
-            // But user wants "more width", so let's ensure we use pageWidth
-            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight > pageHeight ? pageHeight : imgHeight);
+            pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight > pageHeight ? pageHeight : imgHeight, undefined, 'FAST');
         } else {
-            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+            pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
         }
 
         pdf.save(`Invoice_${invoiceNoInput.value || 'Draft'}.pdf`);
