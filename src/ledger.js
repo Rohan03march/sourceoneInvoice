@@ -32,11 +32,35 @@ async function fetchAllInvoices() {
         const q = query(collection(db, "invoices"), orderBy("createdAt", "desc"));
         const querySnapshot = await getDocs(q);
         allInvoices = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        // Sort by the numeric suffix of the invoice number (Big to Small)
+        allInvoices.sort((a, b) => {
+            const getNumericValue = (invNo) => {
+                if (!invNo) return 0;
+                const parts = invNo.split('/');
+                const lastPart = parts[parts.length - 1];
+                const match = lastPart.match(/\d+/);
+                return match ? parseInt(match[0], 10) : 0;
+            };
+
+            const valA = getNumericValue(a.invoiceNo);
+            const valB = getNumericValue(b.invoiceNo);
+
+            if (valA !== valB) {
+                return valB - valA; // Descending
+            }
+            
+            // If numbers are equal, fallback to createdAt (newest first)
+            const dateA = a.createdAt?.seconds || 0;
+            const dateB = b.createdAt?.seconds || 0;
+            return dateB - dateA;
+        });
+
         filteredInvoices = [...allInvoices];
         totalCountDisplay.textContent = filteredInvoices.length;
     } catch (error) {
         console.error("Error fetching invoices:", error);
-        ledgerBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 2rem; color: #ef4444;">Error loading invoices. Please check your connection.</td></tr>`;
+        ledgerBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: #ef4444;">Error loading invoices. Please check your connection.</td></tr>`;
     }
 }
 
