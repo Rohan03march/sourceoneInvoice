@@ -17,9 +17,13 @@ const endDateInput = document.getElementById('ledger-end-date');
 const prevBtn = document.getElementById('prev-page');
 const nextBtn = document.getElementById('next-page');
 const pageInfo = document.getElementById('page-info');
-const totalCountDisplay = document.getElementById('total-count');
-const downloadCsvBtn = document.getElementById('download-csv');
 const clearFiltersBtn = document.getElementById('clear-filters');
+const downloadCsvBtn = document.getElementById('download-csv');
+
+// --- Stat Selectors ---
+const statTotalCount = document.getElementById('stat-total-count');
+const statTotalRevenue = document.getElementById('stat-total-revenue');
+const statPeriod = document.getElementById('stat-period');
 
 // --- Initialization ---
 async function init() {
@@ -58,11 +62,38 @@ async function fetchAllInvoices() {
         });
 
         filteredInvoices = [...allInvoices];
-        totalCountDisplay.textContent = filteredInvoices.length;
+        updateStats();
     } catch (error) {
         console.error("Error fetching invoices:", error);
         ledgerBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: #ef4444;">Error loading invoices. Please check your connection.</td></tr>`;
     }
+}
+
+function updateStats() {
+    statTotalCount.textContent = filteredInvoices.length;
+    
+    const totalRevenue = filteredInvoices.reduce((sum, inv) => sum + (inv.totalAmount || 0), 0);
+    statTotalRevenue.textContent = totalRevenue.toLocaleString('en-IN');
+
+    const startVal = startDateInput.value;
+    const endVal = endDateInput.value;
+    
+    if (startVal && endVal) {
+        statPeriod.textContent = `${formatShortDate(startVal)} - ${formatShortDate(endVal)}`;
+    } else if (startVal) {
+        statPeriod.textContent = `From ${formatShortDate(startVal)}`;
+    } else if (endVal) {
+        statPeriod.textContent = `Until ${formatShortDate(endVal)}`;
+    } else {
+        statPeriod.textContent = 'All Time';
+    }
+}
+
+function formatShortDate(dateStr) {
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    const [y, m, d] = parts;
+    return `${d}/${m}/${y.slice(-2)}`;
 }
 
 function filterData() {
@@ -82,7 +113,7 @@ function filterData() {
     });
 
     currentPage = 1;
-    totalCountDisplay.textContent = filteredInvoices.length;
+    updateStats();
     renderPage();
 }
 
@@ -197,19 +228,22 @@ function renderPage() {
     ledgerBody.innerHTML = '';
 
     if (pageData.length === 0) {
-        ledgerBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-light);">No invoices found.</td></tr>`;
+        ledgerBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 4rem; color: var(--text-light); font-weight: 500;">
+            <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.2;">🔍</div>
+            No invoices found for this criteria.
+        </td></tr>`;
     } else {
         pageData.forEach(inv => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${formatDate(inv.date)}</td>
-                <td class="bold">${inv.invoiceNo}</td>
+                <td class="font-outfit font-bold">${inv.invoiceNo}</td>
                 <td>${inv.companyName}</td>
-                <td class="bold">${inv.totalAmount.toLocaleString('en-IN')}</td>
+                <td class="font-outfit font-bold text-primary">₹${inv.totalAmount.toLocaleString('en-IN')}</td>
                 <td>
-                    <div class="action-buttons">
-                        <button class="view-btn" onclick="window.showInvoiceDetails('${inv.id}')">View</button>
-                        <button class="delete-btn-ledger" onclick="window.deleteInvoice('${inv.id}')">Delete</button>
+                    <div class="row-actions">
+                        <button class="icon-btn btn-view" onclick="window.showInvoiceDetails('${inv.id}')" title="View Details">👁</button>
+                        <button class="icon-btn btn-delete" onclick="window.deleteInvoice('${inv.id}')" title="Delete Invoice">🗑</button>
                     </div>
                 </td>
             `;
@@ -218,9 +252,10 @@ function renderPage() {
     }
 
     // Update pagination UI
-    pageInfo.textContent = `Page ${currentPage} of ${Math.ceil(filteredInvoices.length / PAGE_SIZE) || 1}`;
+    const totalPages = Math.ceil(filteredInvoices.length / PAGE_SIZE) || 1;
+    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
     prevBtn.disabled = currentPage === 1;
-    nextBtn.disabled = currentPage * PAGE_SIZE >= filteredInvoices.length;
+    nextBtn.disabled = currentPage >= totalPages;
 }
 
 // --- Modal Logic ---
@@ -243,14 +278,14 @@ window.showInvoiceDetails = (invoiceId) => {
     inv.staffRows.forEach(row => {
         if (row.designation || row.amount) {
             const li = document.createElement('li');
-            li.innerHTML = `<span>${row.designation || '-'}</span> <span>${row.amount.toLocaleString('en-IN')}</span>`;
+            li.innerHTML = `<span>${row.designation || '-'}</span> <span class="amount">₹${row.amount.toLocaleString('en-IN')}</span>`;
             staffList.appendChild(li);
         }
     });
 
     if (inv.serviceCharge > 0) {
         const li = document.createElement('li');
-        li.innerHTML = `<span>Service Charge</span> <span>${inv.serviceCharge.toLocaleString('en-IN')}</span>`;
+        li.innerHTML = `<span>Service Charge</span> <span class="amount">₹${inv.serviceCharge.toLocaleString('en-IN')}</span>`;
         staffList.appendChild(li);
     }
 
@@ -262,16 +297,16 @@ window.showInvoiceDetails = (invoiceId) => {
         let cgst = sub * 0.09;
 
         const liS = document.createElement('li');
-        liS.innerHTML = `<span>SGST (9%)</span> <span>${sgst.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>`;
+        liS.innerHTML = `<span>SGST (9%)</span> <span class="amount">₹${sgst.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>`;
         staffList.appendChild(liS);
 
         const liC = document.createElement('li');
-        liC.innerHTML = `<span>CGST (9%)</span> <span>${cgst.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>`;
+        liC.innerHTML = `<span>CGST (9%)</span> <span class="amount">₹${cgst.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>`;
         staffList.appendChild(liC);
     }
 
     const totalLi = document.createElement('li');
-    totalLi.innerHTML = `<span>Grand Total</span> <span>${inv.totalAmount.toLocaleString('en-IN')}</span>`;
+    totalLi.innerHTML = `<span>Grand Total</span> <span class="amount">₹${inv.totalAmount.toLocaleString('en-IN')}</span>`;
     staffList.appendChild(totalLi);
 
     modal.style.display = 'flex';
@@ -292,7 +327,7 @@ window.deleteInvoice = async (invoiceId) => {
             filteredInvoices = filteredInvoices.filter(i => i.id !== invoiceId);
             
             // Update UI
-            totalCountDisplay.textContent = filteredInvoices.length;
+            updateStats();
             renderPage();
             
             alert('Invoice deleted successfully.');
