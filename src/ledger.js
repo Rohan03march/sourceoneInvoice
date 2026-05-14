@@ -63,9 +63,20 @@ async function fetchAllInvoices() {
 
         filteredInvoices = [...allInvoices];
         updateStats();
+        
+        // Hide loader
+        const loader = document.getElementById('ledger-loader');
+        if (loader) {
+            setTimeout(() => {
+                loader.classList.add('hidden');
+            }, 300); // Small delay for smooth feel
+        }
     } catch (error) {
         console.error("Error fetching invoices:", error);
         ledgerBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: #ef4444;">Error loading invoices. Please check your connection.</td></tr>`;
+        
+        const loader = document.getElementById('ledger-loader');
+        if (loader) loader.classList.add('hidden');
     }
 }
 

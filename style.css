@@ -277,22 +277,52 @@ textarea:focus {
     align-items: center;
 }
 
+.search-wrapper::before {
+    content: "🏢";
+    position: absolute;
+    left: 14px;
+    font-size: 0.9rem;
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 5;
+}
+
+#company-name {
+    padding-left: 2.75rem; /* Space for the icon */
+    padding-right: 3rem;   /* Space for the arrow */
+}
+
 .dropdown-arrow {
     position: absolute;
-    right: 10px;
-    background: transparent;
-    border: none;
+    right: 12px;
+    background: #f8fafc;
+    border: 1px solid var(--border);
     color: var(--text-light);
     cursor: pointer;
-    font-size: 0.75rem;
-    padding: 0.5rem;
-    transition: all 0.2s ease;
+    font-size: 0.65rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 5;
 }
 
 .dropdown-arrow:hover {
     color: var(--primary);
-    transform: scale(1.1);
+    background: white;
+    border-color: var(--primary-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.dropdown-arrow.active {
+    transform: rotate(180deg);
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
 }
 
 #company-name {
@@ -302,18 +332,27 @@ textarea:focus {
 
 .search-results {
     position: absolute;
-    top: calc(100% + 5px);
+    top: calc(100% + 12px);
     left: 0;
     width: 100%;
-    background: white;
-    border-radius: 0.75rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-    border: 1px solid var(--border);
-    z-index: 100;
-    max-height: 200px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 1.25rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    z-index: 1000;
+    max-height: 280px;
     overflow-y: auto;
-    backdrop-filter: blur(16px);
-    background: rgba(255, 255, 255, 0.9);
+    overflow-x: hidden;
+    padding: 0.5rem;
+    animation: dropdownIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transform-origin: top center;
+}
+
+@keyframes dropdownIn {
+    from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .search-results.hidden {
@@ -321,32 +360,40 @@ textarea:focus {
 }
 
 .result-item {
-    padding: 0.75rem 1rem;
+    padding: 0.85rem 1rem;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text);
     transition: all 0.2s ease;
-    border-bottom: 1px solid #f1f5f9;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2px;
 }
 
-.result-item:last-child {
-    border-bottom: none;
-}
-
-.result-item.no-results {
-    color: var(--text-light);
-    font-style: italic;
-    cursor: default;
-    background: transparent;
+.result-item:hover {
+    background: var(--bg);
+    color: var(--primary);
+    transform: translateX(4px);
 }
 
 .result-item .icon {
-    margin-right: 0.75rem;
-    font-size: 1rem;
-    opacity: 0.7;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .result-item:hover .icon {
-    opacity: 1;
+    background: var(--primary);
+    color: white;
 }
 
 /* Dropdown Search Styling */
@@ -408,7 +455,6 @@ textarea:focus {
     border-radius: 2rem;
     width: 100%;
     min-width: 0;
-    overflow-y: auto;
     display: flex;
     justify-content: center;
     box-shadow: inset 0 20px 25px -5px rgba(0, 0, 0, 0.25);
