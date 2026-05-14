@@ -197,7 +197,7 @@ function renderPage() {
                 <td>${formatDate(inv.date)}</td>
                 <td class="bold">${inv.invoiceNo}</td>
                 <td>${inv.companyName}</td>
-                <td class="bold">₹${inv.totalAmount.toLocaleString('en-IN')}</td>
+                <td class="bold">${inv.totalAmount.toLocaleString('en-IN')}</td>
                 <td>
                     <div class="action-buttons">
                         <button class="view-btn" onclick="window.showInvoiceDetails('${inv.id}')">View</button>
@@ -235,14 +235,14 @@ window.showInvoiceDetails = (invoiceId) => {
     inv.staffRows.forEach(row => {
         if (row.designation || row.amount) {
             const li = document.createElement('li');
-            li.innerHTML = `<span>${row.designation || '-'}</span> <span>₹${row.amount.toLocaleString('en-IN')}</span>`;
+            li.innerHTML = `<span>${row.designation || '-'}</span> <span>${row.amount.toLocaleString('en-IN')}</span>`;
             staffList.appendChild(li);
         }
     });
 
     if (inv.serviceCharge > 0) {
         const li = document.createElement('li');
-        li.innerHTML = `<span>Service Charge</span> <span>₹${inv.serviceCharge.toLocaleString('en-IN')}</span>`;
+        li.innerHTML = `<span>Service Charge</span> <span>${inv.serviceCharge.toLocaleString('en-IN')}</span>`;
         staffList.appendChild(li);
     }
 
@@ -254,16 +254,16 @@ window.showInvoiceDetails = (invoiceId) => {
         let cgst = sub * 0.09;
 
         const liS = document.createElement('li');
-        liS.innerHTML = `<span>SGST (9%)</span> <span>₹${sgst.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>`;
+        liS.innerHTML = `<span>SGST (9%)</span> <span>${sgst.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>`;
         staffList.appendChild(liS);
 
         const liC = document.createElement('li');
-        liC.innerHTML = `<span>CGST (9%)</span> <span>₹${cgst.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>`;
+        liC.innerHTML = `<span>CGST (9%)</span> <span>${cgst.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>`;
         staffList.appendChild(liC);
     }
 
     const totalLi = document.createElement('li');
-    totalLi.innerHTML = `<span>Grand Total</span> <span>₹${inv.totalAmount.toLocaleString('en-IN')}</span>`;
+    totalLi.innerHTML = `<span>Grand Total</span> <span>${inv.totalAmount.toLocaleString('en-IN')}</span>`;
     staffList.appendChild(totalLi);
 
     modal.style.display = 'flex';

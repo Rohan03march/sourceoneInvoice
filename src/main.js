@@ -276,7 +276,7 @@ function updatePreview() {
         tr.innerHTML = `
             <td>${i + 1}</td>
             <td>${row.designation || '-'}</td>
-            <td>₹${row.amount.toLocaleString('en-IN')}</td>
+            <td>${row.amount.toLocaleString('en-IN')}</td>
         `;
         previewTableBody.appendChild(tr);
     });
@@ -298,17 +298,17 @@ function updatePreview() {
         const sgst = subtotal * 0.09;
         const cgst = subtotal * 0.09;
         grandTotal = subtotal + sgst + cgst;
-        previewSgst.textContent = `₹${sgst.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
-        previewCgst.textContent = `₹${cgst.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+        previewSgst.textContent = sgst.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+        previewCgst.textContent = cgst.toLocaleString('en-IN', { maximumFractionDigits: 2 });
     }
 
     // Adjust label if no GST/Service charge
     grandTotalLabel.textContent = (isGstEnabled || isServiceChargeEnabled) ? 'Grand Total' : 'Total';
 
-    previewTotal.textContent = `₹${totalAmt.toLocaleString('en-IN')}`;
-    previewServiceCharge.textContent = `₹${serviceCharge.toLocaleString('en-IN')}`;
-    previewSubtotal.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
-    previewGrandTotal.textContent = `₹${Math.round(grandTotal).toLocaleString('en-IN')}`;
+    previewTotal.textContent = totalAmt.toLocaleString('en-IN');
+    previewServiceCharge.textContent = serviceCharge.toLocaleString('en-IN');
+    previewSubtotal.textContent = subtotal.toLocaleString('en-IN');
+    previewGrandTotal.textContent = Math.round(grandTotal).toLocaleString('en-IN');
     
     previewWords.textContent = numberToWords(Math.round(grandTotal)) + " Only";
 }
@@ -415,7 +415,7 @@ generatePdfBtn.addEventListener('click', async () => {
                 staffRows: staffRows,
                 serviceCharge: includeServiceChargeCheckbox.checked ? (parseFloat(serviceChargeInput.value) || 0) : 0,
                 isGstIncluded: includeGstCheckbox.checked,
-                totalAmount: parseFloat(previewGrandTotal.textContent.replace(/[₹,]/g, '')),
+                totalAmount: parseFloat(previewGrandTotal.textContent.replace(/,/g, '')),
                 createdAt: new Date()
             };
             await addDoc(collection(db, "invoices"), invoiceData);
