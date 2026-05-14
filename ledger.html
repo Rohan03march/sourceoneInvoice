@@ -397,6 +397,29 @@
             display: flex;
             gap: 0.5rem;
         }
+
+        .clear-btn {
+            background: #f1f5f9;
+            color: var(--text-light);
+            border: 1px solid var(--border);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            height: 38px;
+            white-space: nowrap;
+        }
+
+        .clear-btn:hover {
+            background: #e2e8f0;
+            color: var(--text);
+            border-color: #cbd5e1;
+        }
     </style>
 </head>
 
@@ -425,6 +448,9 @@
                             <label>To</label>
                             <input type="date" id="ledger-end-date">
                         </div>
+                        <button id="clear-filters" class="clear-btn" title="Clear all filters">
+                            ✕ Clear
+                        </button>
                     </div>
                     <div class="ledger-actions">
                         <div class="ledger-stats">

@@ -19,6 +19,7 @@ const nextBtn = document.getElementById('next-page');
 const pageInfo = document.getElementById('page-info');
 const totalCountDisplay = document.getElementById('total-count');
 const downloadCsvBtn = document.getElementById('download-csv');
+const clearFiltersBtn = document.getElementById('clear-filters');
 
 // --- Initialization ---
 async function init() {
@@ -103,6 +104,13 @@ function setupEventListeners() {
             currentPage++;
             renderPage();
         }
+    });
+
+    clearFiltersBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        startDateInput.value = '';
+        endDateInput.value = '';
+        filterData();
     });
 }
 
